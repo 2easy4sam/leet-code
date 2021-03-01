@@ -1,5 +1,6 @@
 package com.leetcode.questions.tree;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,92 +9,57 @@ import java.util.Map;
  * TODO: solve it using BT
  */
 public class SmallestCommonRegion {
+    /*
+    - intuition:
+        - this is similar to the lca problem, meaning that the lca must have one node in the left branch and the other node in the right branch
+        - we could use a hashmap to represent a binary tree
+    */
+    private String res;
+    private boolean found = false;
+
     public String findSmallestRegion(List<List<String>> regions, String region1, String region2) {
-        // this problem can be interpreted as:
-        // 1. tree problem
-        // 2. union find problem
+        Map<String, List<String>> tree = new HashMap<>();
 
-        DisjointSet ds = new DisjointSet();
+        for (List<String> region : regions) {
+            String parent = region.get(0);
 
-        int r1 = regions.size() - 1;
-        int r2 = regions.size() - 1;
+            List<String> nodes = new ArrayList<>();
 
-        // init
-        for (int i = 0; i < regions.size(); i++) {
-            for (String r : regions.get(i)) {
-                ds.makeSet(r);
-                if (r.equals(region1)) r1 = Math.min(r1, i);
-                else if (r.equals(region2)) r2 = Math.min(r2, i);
+            for (int i = 1; i < region.size(); i++) {
+                nodes.add(region.get(i));
             }
+
+            tree.put(parent, nodes);
         }
 
-        // 1 level up
-        int i = r1 == r2 ? r1 : Math.max(0, Math.min(r1, r2) - 1);
-        while (i < regions.size()) {
-            List<String> region = regions.get(i);
-            for (int j = 0; j < region.size() - 1; j++) {
-                ds.union(region.get(j), region.get(j + 1));
-            }
-            String rep1 = ds.find(region1).parent.data;
-            String rep2 = ds.find(region2).parent.data;
-
-            if (rep1.equals(rep2)) return rep2;
-            i++;
+        for (String r : tree.keySet()) {
+            if (found) break;
+            find(tree, r, region1, region2);
         }
 
-        return null;
+        return res;
     }
 
-    private static class DisjointSet {
-        class Node {
-            public Node parent;    // representative of the set
-            public String data;
-            public int rank;
+    private int find(Map<String, List<String>> tree, String curr, String r1, String r2) {
+        if (curr == null) return 0;
 
-            public Node(String data) {
-                this.data = data;
-                rank = 0;
-            }
+        List<String> regions = tree.getOrDefault(curr, new ArrayList<>());
+
+        int total = 0;
+
+        for (String region : regions) {
+            total += find(tree, region, r1, r2);
         }
 
-        private Map<String, Node> map;
-
-        DisjointSet() {
-            map = new HashMap<>();
+        if (curr.equals(r1) || curr.equals(r2)) {
+            total++;
         }
 
-        // makeSet
-        private void makeSet(String data) {
-            Node node = new Node(data);
-            node.parent = node;
-            map.put(data, node);
+        if (total == 2 && res == null) {
+            res = curr;
+            found = true;
         }
 
-        // union
-        private boolean union(String d1, String d2) {
-            Node rep1 = find(d1);
-            Node rep2 = find(d2);
-
-            if (rep1 == rep2) return false;
-
-            if (rep1.rank >= rep2.rank) {
-                rep2.parent = rep1;
-                if (rep1.rank == rep2.rank) rep1.rank++;
-            } else {
-                rep1.parent = rep2;
-            }
-
-            return true;
-        }
-
-        // finds the representative of the group
-        private Node find(String data) {
-            Node node = map.get(data);
-
-            if (node == node.parent) return node;
-
-            node.parent = find(node.parent.data);
-            return node.parent;
-        }
+        return total;
     }
 }

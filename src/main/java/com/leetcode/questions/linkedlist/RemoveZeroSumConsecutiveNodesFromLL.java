@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Given the head of a linked list, we repeatedly delete consecutive
+ * Given the head of a linked list, we repeatedly remove consecutive
  * sequences of nodes that sum to 0 until there are no such sequences.
  * <p>
  * After doing so, return the head of the final linked list.  You may

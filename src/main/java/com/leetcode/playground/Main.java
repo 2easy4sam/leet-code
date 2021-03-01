@@ -1,9 +1,11 @@
 package com.leetcode.playground;
 
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Main {
 
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private static final char BATTLESHIP_PART = 'X';
     private static final char EMPTY_CELL = '.';
     private static final char[] EMPTY_STRING_REPLACEMENT = new char[]{'%', '2', '0'};
@@ -12,12 +14,30 @@ public class Main {
         int val;
         TreeNode left, right;
 
+
         TreeNode(int x) {
             val = x;
         }
     }
 
     public static void main(String[] args) {
+        TreeSet<Integer> set = new TreeSet<>();
+        set.add(10);
+        set.add(9);
+        set.add(8);
+
+        System.out.println(set.ceiling(9));
+        System.out.println(set.toString());
+    }
+
+    private static int test(int num) {
+        if (num == 1) return 1;
+        return num + test(num - 1);
+    }
+
+    private static int factorial(int num) {
+        if (num == 0) return 1;
+        return num * factorial(num - 1);
     }
 
     private static void increment(int[] arr) {
