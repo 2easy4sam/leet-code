@@ -10,24 +10,31 @@ public class Main {
     private static final char EMPTY_CELL = '.';
     private static final char[] EMPTY_STRING_REPLACEMENT = new char[]{'%', '2', '0'};
 
-    static class TreeNode {
-        int val;
-        TreeNode left, right;
-
-
-        TreeNode(int x) {
-            val = x;
-        }
+    public static void main(String[] args) {
+        System.out.println((int) 1e9 + 7);
     }
 
-    public static void main(String[] args) {
-        TreeSet<Integer> set = new TreeSet<>();
-        set.add(10);
-        set.add(9);
-        set.add(8);
 
-        System.out.println(set.ceiling(9));
-        System.out.println(set.toString());
+
+    private static int countSubarrs(int len) {
+        int inc = 1, cnt = 0;
+
+        while (len > 0) {
+            cnt += inc;
+            inc++;
+            len--;
+        }
+
+        return cnt;
+    }
+
+    private static TreeNode lca(TreeNode curr, TreeNode left, TreeNode right) {
+        if (curr == null || curr == left || curr == right) return curr;
+        TreeNode l = lca(curr.left, left, right);
+        TreeNode r = lca(curr.right, left, right);
+        if (l != null && r != null) return curr;
+        if (l != null) return l;
+        return r;
     }
 
     private static int test(int num) {
@@ -84,44 +91,6 @@ public class Main {
             currentWeight += weight;
             if (currentWeight < 5000) count++;
             else break;
-        }
-
-        return count;
-    }
-
-    public int countBattleships(char[][] board) {
-        int count = 0;
-        final int rowCount = board.length;
-        final int colCount = board[0].length;
-        int[] visitedCells = new int[rowCount * colCount];
-
-        for (int i = 0; i < rowCount; i++) {
-            for (int j = 0; j < colCount; j++) {
-                int idx = i * colCount + j;
-
-                // not visited
-                if (visitedCells[idx] == 0) {
-                    char cell = board[i][j];
-
-                    if (cell == BATTLESHIP_PART) {
-                        count++;
-
-                        // traverse horizontally
-                        for (int k = j; k < colCount; k++) {
-
-                            if (board[i][k] == EMPTY_CELL) break;
-                            visitedCells[i * colCount + k] = 1;
-                        }
-
-                        // traverse vertically
-                        for (int k = i; k < rowCount; k++) {
-
-                            if (board[k][j] == EMPTY_CELL) break;
-                            visitedCells[k * colCount + j] = 1;
-                        }
-                    }
-                }
-            }
         }
 
         return count;
@@ -269,5 +238,53 @@ public class Main {
         }
 
         return sum;
+    }
+
+    public int countBattleships(char[][] board) {
+        int count = 0;
+        final int rowCount = board.length;
+        final int colCount = board[0].length;
+        int[] visitedCells = new int[rowCount * colCount];
+
+        for (int i = 0; i < rowCount; i++) {
+            for (int j = 0; j < colCount; j++) {
+                int idx = i * colCount + j;
+
+                // not visited
+                if (visitedCells[idx] == 0) {
+                    char cell = board[i][j];
+
+                    if (cell == BATTLESHIP_PART) {
+                        count++;
+
+                        // traverse horizontally
+                        for (int k = j; k < colCount; k++) {
+
+                            if (board[i][k] == EMPTY_CELL) break;
+                            visitedCells[i * colCount + k] = 1;
+                        }
+
+                        // traverse vertically
+                        for (int k = i; k < rowCount; k++) {
+
+                            if (board[k][j] == EMPTY_CELL) break;
+                            visitedCells[k * colCount + j] = 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        return count;
+    }
+
+    static class TreeNode {
+        int val;
+        TreeNode left, right;
+
+
+        TreeNode(int x) {
+            val = x;
+        }
     }
 }
